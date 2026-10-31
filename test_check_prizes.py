@@ -38,7 +38,7 @@ class ShippedData(unittest.TestCase):
     def test_prizes_csv_is_clean(self):
         fieldnames, rows = cp.load(os.path.join(HERE, "prizes.csv"))
         self.assertEqual(cp.problems(fieldnames, rows), [])
-        self.assertGreaterEqual(len(rows), 9)
+        self.assertGreaterEqual(len(rows), 12)
 
     def test_every_policy_is_present(self):
         _, rows = cp.load(os.path.join(HERE, "prizes.csv"))
