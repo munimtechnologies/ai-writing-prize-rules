@@ -1,0 +1,30 @@
+{
+ "W-ND": {
+  "url": "https://wroteabook.org/writing-competitions-november-december-2026/",
+  "status": 200,
+  "error": null,
+  "ai_sentences": [
+   "You must be 18 or over to win, and AI-generated writing is not allowed.",
+   "The rules say AI-generated or AI-assisted work will not be considered.",
+   "The free Commonwealth Short Story Prize was moved and now opens in January 2027, while the Commonwealth Foundation reviews its rules following concerns about AI."
+  ]
+ },
+ "NCW": {
+  "url": "https://www.newcastlecreativewriters.com.au/post/writing-competitions-closing-november-2026",
+  "status": 200,
+  "error": null,
+  "ai_sentences": [
+   "AI-generated or AI-assisted submissions are explicitly prohibited."
+  ]
+ },
+ "W-FREE": {
+  "url": "https://wroteabook.org/free-writing-contests-october-2026/",
+  "status": 200,
+  "error": null,
+  "ai_sentences": [
+   "Send an unpublished story of 2,000 to 7,500 words as an anonymous Word document; generative AI is not allowed.",
+   "Send an unpublished, anonymous poetry manuscript of roughly 50 to 100 pages; AI-generated work is not eligible.",
+   "Send science fiction, fantasy or dark fantasy under 17,000 words; you keep all rights and AI-generated work is disqualified."
+  ]
+ }
+}

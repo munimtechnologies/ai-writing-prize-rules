@@ -1,8 +1,8 @@
 # ai-writing-prize-rules
 
-Which writing prizes accept work made with generative AI, and exactly what each one asks you to disclose. One row per prize in [`prizes.csv`](prizes.csv), with the rule quoted word for word in its original language, a link to the page it came from and the date it was checked.
+Which writing prizes accept work made with generative AI, and exactly what each one asks you to disclose. One row per prize in [`prizes.csv`](prizes.csv), with the rule quoted word for word in its original language, a link to the page it came from and the date it was checked. Since 0.6.0 it also holds a pre-registered [census of 54 writing contests](#census-of-54-contests-2026-11) and what each says about AI.
 
-Made by MV2 of Munim, Inc., with AI agents working in his name. Data and text: CC BY 4.0. Code (`check_prizes.py`, `verify_quotes.py` and their tests): Apache-2.0.
+Made by MV2 of Munim, Inc., with AI agents working in his name. Data and text: CC BY 4.0. Code (`check_prizes.py`, `verify_quotes.py`, `census.py` and their tests): Apache-2.0.
 
 **Not legal advice.** Rules change between editions. Read the organiser's own page before you enter.
 
@@ -39,7 +39,31 @@ Made by MV2 of Munim, Inc., with AI agents working in his name. Data and text: C
 - **The biggest prizes are not AI contests.** The largest sums here, Matsumoto Seicho's ¥5,000,000, FC2 Doctorow's US$15,000 and Hayakawa's ¥1,000,000, come from established literary prizes that ask entrants to say how they used AI. None of these rules, as quoted, sets a limit on how much of the text AI may write. The contests built around AI (AI Philosophy Competition, Prix Pascal, Prompty Awards, Korea AI Creative Literature Award) offer smaller or unstated sums, and two of them charge entry fees (Prompty US$25 to US$40, the Korea award ₩20,000 per entry).
 - **Most open doors are in Japan, but not all.** Seven of the thirteen prizes here that accept AI-made work take entries in Japanese. In English, FC2's two innovative-fiction prizes (an imprint of the University of Alabama Press) accept disclosed AI-generated text, while Writers of the Future and the Nebula Awards ban it. All three English-language fiction contests here that accept it charge an entry fee (FC2 US$25, with a fee-waived form; Prompty US$25 early, US$40 final), and FC2 Doctorow is only for writers with at least three published books.
 - **In Korean, one publisher's page shows two wordings of a ban.** The one Korean contest here that accepts AI requires it. The publisher Changbi lists six contests on one rules page. Three of them, its new-writer prize, its young-adult fiction prize (₩20,000,000 advance) and its children's new-writer prize, carry the same sentence: "AI 제작 작품은 응모할 수 없습니다." ("AI-made works may not be entered"). Its children's-book manuscript contest (₩20,000,000 advance per category) words it differently: entries found to be written with plagiarism or generative AI "심사 대상에서 제외되거나 당선이 취소될 수 있습니다" (may be excluded from judging or have the award cancelled). That is a discretionary rule, not an automatic one, and it is listed here as `banned` because it allows no AI-written manuscripts. The page's text gives no entry rules, and so no AI rule, for Changbi's story contest or its picture-book prize, and neither is listed here.
-- This is a small, hand-picked list, not a survey, so it shows where to look rather than how common each policy is.
+- This table is small and hand-picked, not a survey, so it shows where to look rather than how common each policy is. For how common each policy is, see the census below.
+
+## Census of 54 contests (2026-11)
+
+A pre-registered count of what writing contests say about AI on their own pages. The frame is every contest linked from three public deadline listings (wroteabook.org's October-December and free-contest lists, and Newcastle Creative Writers' November list), which were compiled to help writers find deadlines, not to study AI. The rubric and five predictions were committed at 04:36 UTC on 2026-11-02, before `census.py` fetched any page (04:39 to 04:46 UTC). Full result: [census/2026-11/RESULT.md](census/2026-11/RESULT.md). Every code and the sentence it rests on: [census/2026-11/coding.csv](census/2026-11/coding.csv).
+
+| Code (primary) | Contests |
+|---|---|
+| Bans any use of AI (incl. editing, translation or grammar tools) | 18 |
+| Bans AI-generated text only | 6 |
+| Accepts AI-generated text with disclosure | 1 |
+| Mentions AI, but no rule on entries | 1 |
+| No AI sentence on any page read | 25 |
+| Unreadable or unreachable | 3 |
+
+- **About half ban AI, and about half say nothing.** 24 of the 51 readable contests (47%) ban AI and 25 (49%) have no AI sentence on the pages read. All five predictions held. P5 (fee contests ban more often: 56% vs 35%) held in direction but is not significant (Fisher p = 0.17).
+- **Most bans reach assistance, not just generated text**: 18 of 24. SmokeLong, CRAFT and Bath name translation, and Comma Press's Dinesh Allirajah Prize names Grammarly.
+- **The listings rarely tell you.** Only 5 of the 24 banned contests have the ban mentioned in the listing that names them. For 11 of the 24, the ban is not on the contest page the listing links to, but one click away on a rules, FAQ or submission page.
+- **Only one contest accepts AI-made text**: the Missouri Review's Jeffrey E. Smith Editors' Prize, which asks for the disclosure "in specific detail within the piece and in your cover letter".
+- **The Commonwealth Short Story Prize has no AI rule on entries.** Its page speaks of allegations that AI wrote this year's winning stories and of a review, and a listing says the prize now opens in January 2027.
+- **"Silent" does not mean "allowed".** One listing says the PJI Editor's Prize bars AI-generated work, though the prize page the census read says nothing about AI.
+- **One reading choice is shown both ways.** For three organisers, the strictest rule found was written for another of their programmes (Illustrators of the Future, MWA's Edgar Awards, Mslexia's magazine submissions). Counting only rules that apply to the contest itself gives 21 bans of 51 (41%), and every prediction still holds.
+- `census.py`'s automatic first pass agreed with the primary coding for 47 of 54 contests (87%). The primary coding was done by AI agents. Every sentence is published so anyone can recode it.
+
+Compared with Become a Writer Today's list of magazines and contests (81 of 179 ban outright, 87 have no stated policy), the split among contests alone is similar. What this adds: a frame not chosen for AI, every AI sentence word for word with its page, and predictions fixed before reading.
 
 ## Fields
 
@@ -74,6 +98,7 @@ On 2026-11-01 at 06:13 UTC, `verify_quotes.py` fetched every source page and loo
 ```
 python check_prizes.py                    # header, required fields, allowed values, dates, https sources, unique ids, consistent banned rows
 python verify_quotes.py --out-dir out     # fetch each source once and look for each quote; writes out/VERIFY.md and out/verify.json
+python census.py --contests census/2026-11/contests.csv --out-dir out --save-text --pause 1   # re-run the census fetch (pages as they stand today)
 python -m unittest                        # offline tests (no network)
 ```
 
@@ -81,6 +106,7 @@ python -m unittest                        # offline tests (no network)
 
 ## Changes
 
+- 0.6.0 (2026-11-02): the census of 54 contests, graded against its pre-registration. All five predictions held (24 of 51 readable contests ban AI, 1 accepts disclosed AI-generated text, 18 of the 24 bans reach assistance, listings mention the ban for 5 of 24, fee contests ban more often but not significantly). Adds `census/2026-11/coding.csv`, `RESULT.md` and `census.py`'s output. `prizes.csv` is unchanged.
 - 0.5.0 (2026-11-01): added three more Changbi contests from the same rules page: the young-adult fiction prize and the children's new-writer prize (same ban sentence as the new-writer prize) and the children's-book manuscript contest (a discretionary "may be excluded" ban). 19 prizes, 13 of which accept AI-made work.
 - 0.4.0 (2026-11-01): every quote re-checked with `verify_quotes.py` (added here with its tests); all 14 earlier rows still match their pages exactly. Added Changbi's New Writer Literary Award (bans AI-made works) and the 1st Korea AI Creative Literature Award (requires AI, scores the AI process, charges an entry fee): the first Korean rows.
 - 0.3.0 (2026-10-31): added the FC2 Catherine Doctorow and Ronald Sukenick Innovative Fiction Prizes (2027 contests), the first English-language prizes here from an established press that accept disclosed AI-generated text.
