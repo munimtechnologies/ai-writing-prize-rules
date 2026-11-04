@@ -1,12 +1,16 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Munim, Inc.
-"""Offline tests for census.py (no network)."""
+"""Offline tests for census.py (no internet; one test uses a server on 127.0.0.1)."""
 import csv
+import http.server
 import json
 import os
 import shutil
 import tempfile
+import threading
 import unittest
+import urllib.error
+import urllib.request
 
 import census as c
 
@@ -74,6 +78,76 @@ class Classify(unittest.TestCase):
                          ("allow_or_conditional", None))
         self.assertEqual(c.classify(page, ["The theme this year is AI and the future."]), ("other_mention", None))
 
+    def test_curly_apostrophe(self):
+        # 0.1.1: 0.1.0 read this as allow_or_conditional ("accepted"), missing the curly "won’t".
+        page = [{"chars": 1000}]
+        self.assertEqual(c.classify(page, ["AI-generated entries won’t be accepted."]), ("ban", "generated"))
+
+
+class CookieLoop(http.server.BaseHTTPRequestHandler):
+    """Redirects to itself (HTTP 307) and sets a cookie until the cookie comes back, as some contest sites do."""
+
+    def do_GET(self):
+        if self.path == "/nolocation":  # a 307 with no Location header: urllib cannot follow it
+            self.send_response(307)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+        if "seen=1" in (self.headers.get("Cookie") or ""):
+            body = b"<html><body><p>Entries must be your own work.</p></body></html>"
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        else:
+            self.send_response(307)
+            self.send_header("Set-Cookie", "seen=1; Path=/")
+            self.send_header("Location", self.path)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+
+    def log_message(self, *args):
+        pass
+
+
+class Fetch(unittest.TestCase):
+    def setUp(self):
+        try:
+            self.srv = http.server.HTTPServer(("127.0.0.1", 0), CookieLoop)
+        except OSError as exc:  # no loopback sockets in this sandbox
+            self.skipTest("cannot listen on 127.0.0.1: %s" % exc)
+        self.thread = threading.Thread(target=self.srv.serve_forever, daemon=True)
+        self.thread.start()
+        self.url = "http://127.0.0.1:%d/rules" % self.srv.server_address[1]
+
+    def tearDown(self):
+        self.srv.shutdown()
+        self.srv.server_close()
+
+    def test_cookie_redirect_is_followed(self):
+        got = c.fetch(self.url, timeout=10, proxies={})
+        self.assertEqual(got["status"], 200, got["error"])
+        self.assertIn("Entries must be your own work.", got["text"])
+        self.assertEqual(got["final_url"], self.url)
+
+    def test_redirect_without_location_is_recorded(self):
+        url = self.url.replace("/rules", "/nolocation")
+        got = c.fetch(url, timeout=10, proxies={})
+        self.assertEqual(got["status"], 307)
+        self.assertEqual(got["error"], "HTTP Error 307: Temporary Redirect")
+        self.assertIn("location", got)
+        self.assertIsNone(got["location"])
+        self.assertIsNone(got["text"])
+
+    def test_without_a_cookie_jar_it_loops(self):
+        # How 0.1.0 failed: no cookie jar, so urllib gives up with HTTP 307 after repeated redirects.
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+        with self.assertRaises(urllib.error.HTTPError) as cm:
+            opener.open(self.url, timeout=10)
+        self.assertEqual(cm.exception.code, 307)
+        cm.exception.close()
+
 
 class EndToEnd(unittest.TestCase):
     def setUp(self):
@@ -119,6 +193,7 @@ class EndToEnd(unittest.TestCase):
         self.assertNotIn("https://other.org/terms", fetched)
         with open(os.path.join(out, "census.json"), encoding="utf-8") as fh:
             res = json.load(fh)
+        self.assertEqual(res["version"], "0.1.1")
         self.assertEqual(res["prereg"]["committed_at"], "2026-11-02T04:50:00Z")
         p1, p2 = res["contests"]
         self.assertEqual((p1["auto_label"], p1["auto_scope"]), ("ban", "assisted"))

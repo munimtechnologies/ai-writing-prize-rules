@@ -18,10 +18,15 @@ published.
 Writes census.json, sentences.csv, listings.json and CENSUS_AUTO.md to --out-dir (and pages/*.txt with
 --save-text). Standard library only. Made by MV2 of Munim, Inc., with AI agents working in his name.
 Apache-2.0.
+
+0.1.1 (see CHANGELOG.md): each fetch keeps its own cookie jar while following redirects; a redirect that
+urllib cannot follow (for example a 307 with no Location header) is recorded with its Location, or None;
+ban cues match curly apostrophes ("can’t") like straight ones.
 """
 import argparse
 import csv
 import html
+import http.cookiejar
 import json
 import os
 import re
@@ -33,7 +38,7 @@ import urllib.parse
 import urllib.request
 from html.parser import HTMLParser
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 USER_AGENT = ("ai-writing-prize-rules-census/%s (+https://github.com/munimtechnologies/"
               "ai-writing-prize-rules)" % VERSION)
 REPO_API = "https://api.github.com/repos/munimtechnologies/ai-writing-prize-rules/commits"
@@ -75,6 +80,13 @@ BLOCK_TAGS = {"p", "div", "br", "li", "ul", "ol", "h1", "h2", "h3", "h4", "h5", 
               "main", "aside", "figcaption", "hr", "label", "option", "summary", "details"}
 SENTENCE_END = re.compile(r"(?<=[.!?])\s+(?=[\"'“‘(\[]?[A-Z0-9])")
 SPACE = re.compile(r"\s+")
+
+APOSTROPHES = str.maketrans({"’": "'", "‘": "'", "ʼ": "'"})
+
+
+def norm(s):
+    """Curly apostrophes to straight ones, for cue matching only; sentences are always kept as found."""
+    return s.translate(APOSTROPHES)
 
 
 class Extract(HTMLParser):
@@ -185,6 +197,8 @@ def classify(pages, sents):
     ban          an AI sentence (not about training) has a prohibition cue; scope 'assisted' if a banning
                  sentence also mentions assistance, tools, editing or any use, else 'generated'
     allow_or_conditional  no ban cue, but an allow/disclose cue     other_mention  anything else
+
+    Cues are matched on norm(sentence), so "can’t" counts like "can't" (0.1.1).
     """
     read = [p for p in pages if p.get("chars") is not None]
     if not read:
@@ -193,7 +207,7 @@ def classify(pages, sents):
         if all(p["chars"] < MIN_CHARS for p in read):
             return "unreadable", None
         return "silent", None
-    rule = [s for s in sents if not TRAIN_CUE.search(s)]
+    rule = [norm(s) for s in sents if not TRAIN_CUE.search(s)]
     if not rule:
         return "training_only", None
     bans = [s for s in rule if BAN_CUE.search(s)]
@@ -221,16 +235,31 @@ def decode(body, header_charset=None):
     return body.decode("utf-8", errors="replace")
 
 
-def fetch(url, timeout=45):
-    """{'status', 'tls', 'final_url', 'text' (decoded HTML or None), 'error'}; one unverified retry on a
-    certificate error, marked as such."""
+def make_opener(ctx, proxies=None):
+    """An opener with a fresh cookie jar (so cookies set during one fetch's redirects are sent back on the
+    next hop, and nothing is shared between fetches) and the given TLS context. proxies=None keeps urllib's
+    usual proxy settings; a dict (for example {}) replaces them."""
+    handlers = [urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()),
+                urllib.request.HTTPSHandler(context=ctx)]
+    if proxies is not None:
+        handlers.append(urllib.request.ProxyHandler(proxies))
+    return urllib.request.build_opener(*handlers)
+
+
+def fetch(url, timeout=45, proxies=None):
+    """{'status', 'tls', 'final_url', 'text' (decoded HTML or None), 'error'}.
+
+    Redirects are followed with a fresh cookie jar per call (0.1.1; 0.1.0 kept no cookies, so a site that
+    sets a cookie and redirects back to itself would loop). A 3xx that urllib does not follow comes back as
+    an error with 'location' set to the response's Location header (None when it has none). One unverified
+    retry on a certificate error, marked as such."""
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT,
                                                "Accept": "text/html,application/xhtml+xml,*/*;q=0.8",
                                                "Accept-Language": "en"})
     error = None
-    for tls, ctx in (("verified", None), ("unverified", ssl._create_unverified_context())):
+    for tls, ctx in (("verified", ssl.create_default_context()), ("unverified", ssl._create_unverified_context())):
         try:
-            with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
+            with make_opener(ctx, proxies).open(req, timeout=timeout) as resp:
                 ctype = resp.headers.get("Content-Type", "")
                 body = resp.read(5_000_000)
                 if ctype and "html" not in ctype and "text" not in ctype:
@@ -239,7 +268,10 @@ def fetch(url, timeout=45):
                 return {"status": resp.status, "tls": tls, "final_url": resp.geturl(),
                         "text": decode(body, resp.headers.get_content_charset()), "error": None}
         except urllib.error.HTTPError as e:
-            return {"status": e.code, "tls": tls, "final_url": url, "text": None, "error": str(e)}
+            got = {"status": e.code, "tls": tls, "final_url": url, "text": None, "error": str(e)}
+            if 300 <= e.code < 400:  # a redirect urllib did not follow: record where it pointed, if anywhere
+                got["location"] = e.headers.get("Location") if e.headers is not None else None
+            return got
         except (urllib.error.URLError, ssl.SSLError, OSError) as e:
             error = str(getattr(e, "reason", e))
             if "CERTIFICATE" not in error.upper():
@@ -301,6 +333,8 @@ def census(rows, fetcher=fetch, pause=1.0):
             got = get(url)
             entry = {"url": url, "final_url": got["final_url"], "status": got["status"], "tls": got["tls"],
                      "error": got["error"], "chars": None, "followed": url not in main_urls}
+            if "location" in got:
+                entry["location"] = got["location"]
             if got["text"] is not None:
                 text, links = extract(got["text"])
                 entry["chars"] = len(text)
