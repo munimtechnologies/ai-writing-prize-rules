@@ -1,0 +1,61 @@
+{
+ "at": "2026-11-04T06:21:57Z",
+ "results": [
+  {
+   "status": 307,
+   "reason": "Temporary Redirect",
+   "headers": {
+    "content-type": "text/html",
+    "x-sucuri-id": "20037",
+    "server": "Sucuri/Cloudproxy"
+   },
+   "cookie_names": [],
+   "body_chars": 1359,
+   "body_head": "\t        <html><title>You are being redirected...</title>\n\t\t<noscript>Javascript is required. Please enable javascript before you are allowed to see this page.</noscript>\n\t\t<script>var s={},u,c,U,r,i,l=0,a,e=eval,w=String.fromCharCode,sucuri_cloudproxy_js='',S='aj1TdHJpbmcuZnJvbUNoYXJDb2RlKDU1KSArICdkJyArICJhIiArICc5JyArICI2IiArIFN0cmluZy5mcm9tQ2hhckNvZGUoMTAyKSArIFN0cmluZy5mcm9tQ2hhckNvZGUoOTcpICsgIjUiICsgU3RyaW5nLmZyb21DaGFyQ29kZSg1MCkgKyAnZicgKyAnMicgKyBTdHJpbmcuZnJvbUNoYXJDb2RlKDU1KSArIFN0cmluZy5mcm9tQ2hhckNvZGUoNTEpICsgIjgiICsgIjMiICsgJzQnICsgU3RyaW5nLmZyb21DaGFyQ29kZSgxMDApICsgIjgiICsgU3",
+   "url": "https://winningwriters.com/our-contests/wergle-flomp-humor-poetry-contest-free",
+   "agent": "census"
+  },
+  {
+   "status": 307,
+   "reason": "Temporary Redirect",
+   "headers": {
+    "content-type": "text/html",
+    "x-sucuri-id": "20037",
+    "server": "Sucuri/Cloudproxy"
+   },
+   "cookie_names": [],
+   "body_chars": 1359,
+   "body_head": "\t        <html><title>You are being redirected...</title>\n\t\t<noscript>Javascript is required. Please enable javascript before you are allowed to see this page.</noscript>\n\t\t<script>var s={},u,c,U,r,i,l=0,a,e=eval,w=String.fromCharCode,sucuri_cloudproxy_js='',S='bT0iYyIgKyAnMycgKyAnNycgKyBTdHJpbmcuZnJvbUNoYXJDb2RlKDU0KSArICJiIiArIFN0cmluZy5mcm9tQ2hhckNvZGUoMTAxKSArIFN0cmluZy5mcm9tQ2hhckNvZGUoNTUpICsgIjciICsgU3RyaW5nLmZyb21DaGFyQ29kZSg5NykgKyAiOSIgKyAnZScgKyAiNyIgKyAiZiIgKyAiNiIgKyBTdHJpbmcuZnJvbUNoYXJDb2RlKDEwMikgKyBTdHJpbmcuZnJvbUNoYXJDb2RlKDEwMCkgKyAnMycgKyAiOSIgKyAiYiIgKyBTdHJpbmcuZnJvbUNoYX",
+   "url": "https://winningwriters.com/our-contests/wergle-flomp-humor-poetry-contest-free",
+   "agent": "browser"
+  },
+  {
+   "status": 307,
+   "reason": "Temporary Redirect",
+   "headers": {
+    "content-type": "text/html",
+    "x-sucuri-id": "20037",
+    "server": "Sucuri/Cloudproxy"
+   },
+   "cookie_names": [],
+   "body_chars": 1411,
+   "body_head": "\t        <html><title>You are being redirected...</title>\n\t\t<noscript>Javascript is required. Please enable javascript before you are allowed to see this page.</noscript>\n\t\t<script>var s={},u,c,U,r,i,l=0,a,e=eval,w=String.fromCharCode,sucuri_cloudproxy_js='',S='ZD0iNyIgKyAnZCcgKyAiYSIgKyBTdHJpbmcuZnJvbUNoYXJDb2RlKDU3KSArIFN0cmluZy5mcm9tQ2hhckNvZGUoNTQpICsgU3RyaW5nLmZyb21DaGFyQ29kZSgxMDIpICsgJ2EnICsgIjUiICsgIjIiICsgU3RyaW5nLmZyb21DaGFyQ29kZSgxMDIpICsgJzInICsgU3RyaW5nLmZyb21DaGFyQ29kZSg1NSkgKyBTdHJpbmcuZnJvbUNoYXJDb2RlKDUxKSArIFN0cmluZy5mcm9tQ2hhckNvZGUoNTYpICsgIjMiICsgU3RyaW5nLmZyb21DaGFyQ29kZS",
+   "url": "https://winningwriters.com/",
+   "agent": "census"
+  },
+  {
+   "status": 307,
+   "reason": "Temporary Redirect",
+   "headers": {
+    "content-type": "text/html",
+    "x-sucuri-id": "20037",
+    "server": "Sucuri/Cloudproxy"
+   },
+   "cookie_names": [],
+   "body_chars": 1307,
+   "body_head": "\t        <html><title>You are being redirected...</title>\n\t\t<noscript>Javascript is required. Please enable javascript before you are allowed to see this page.</noscript>\n\t\t<script>var s={},u,c,U,r,i,l=0,a,e=eval,w=String.fromCharCode,sucuri_cloudproxy_js='',S='dT0nYycgKyAnMycgKyAnNycgKyAiNiIgKyAiYiIgKyAnZScgKyAnNycgKyAnNycgKyBTdHJpbmcuZnJvbUNoYXJDb2RlKDk3KSArIFN0cmluZy5mcm9tQ2hhckNvZGUoNTcpICsgJ2UnICsgJzcnICsgU3RyaW5nLmZyb21DaGFyQ29kZSgxMDIpICsgIjYiICsgImYiICsgU3RyaW5nLmZyb21DaGFyQ29kZSgxMDApICsgJzMnICsgIjkiICsgImIiICsgJ2InICsgImIiICsgJ2InICsgJzInICsgImEiICsgIjIiICsgIjAiICsgU3RyaW5nLmZyb21DaG",
+   "url": "https://winningwriters.com/",
+   "agent": "browser"
+  }
+ ]
+}

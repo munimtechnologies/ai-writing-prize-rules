@@ -1,5 +1,14 @@
 # Changelog: census.py
 
+## Note (2026-11-04, later): what the Wergle Flomp 307 is
+
+A follow-up probe on 2026-11-04 at 06:21 UTC fetched the Wergle Flomp contest page and the site's home page once with the census's user agent and once with a desktop browser's user agent, without following redirects. The saved answers are in [`census/2026-11/wergle-probe-2026-11-04.json`](census/2026-11/wergle-probe-2026-11-04.json). All four answers were the same:
+
+- HTTP 307 with **no Location header**, which confirms the 0.1.1 erratum below.
+- `Server: Sucuri/Cloudproxy` and an `x-sucuri-id` header. The body is a "You are being redirected..." page that says "Javascript is required" and runs an obfuscated script.
+
+So the page is behind the site firewall's JavaScript challenge. A browser that runs the script gets through, but a reader that does not run JavaScript never sees the page, whatever its user agent. The 0.1.1 erratum said the fault "lies with the site". More exactly, the site's firewall blocks automated readers. A future census records such pages as **blocked to automated readers (JavaScript challenge)**, not as unreachable, and does not try to get past the challenge. The 2026-11 census's exclusion and its results are unchanged.
+
 ## 0.1.1 (2026-11-04)
 
 The 2026-11 census in `census/2026-11/` was made with 0.1.0. Its files, primary coding and graded result are unchanged. The next census will use 0.1.1.
